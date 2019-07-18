@@ -21,19 +21,27 @@ namespace encode
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
+            // read the parameter in query
             string toEncrypt = req.Query["toencrypt"];
 
+            // read the parameter in body
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
+            
+            // use the body data if the data from query is empty
             toEncrypt = toEncrypt ?? data?.toencrypt;
 
+            // create encrypter object
             SHA1 sha1 = new SHA1CryptoServiceProvider();
 
+            // encrypt
             byte[] inputBytes = (new UnicodeEncoding()).GetBytes(toEncrypt);
             byte[] hash = sha1.ComputeHash(inputBytes);
 
+            // convert to string
             string encrypted = Convert.ToBase64String(hash);
 
+            // return encrypted data or error if the data is null
             return encrypted != null
                 ? (ActionResult)new OkObjectResult(encrypted)
                 : new BadRequestObjectResult("Please pass a text to encrypt with SHA1 on the query string or in the request body");
