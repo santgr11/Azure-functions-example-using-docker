@@ -23,6 +23,7 @@ namespace isprime
             string numberAsText = req.Query["number"];
 
             // Validate the parameter
+            // Check for null or white space
             if (string.IsNullOrWhiteSpace(numberAsText))
             {
                 return new BadRequestObjectResult("Please pass a valid number on the query");
@@ -30,6 +31,7 @@ namespace isprime
 
             int number;
 
+            // Check of the data is an integer
             try
             {
                 number = Int32.Parse(numberAsText);
@@ -38,6 +40,7 @@ namespace isprime
                 return new BadRequestObjectResult("The number must be an integer");
             }
 
+            // Check if the number is at least 1
             if (number < 1)
             {
                 return new BadRequestObjectResult("The number must be greater than 0");
